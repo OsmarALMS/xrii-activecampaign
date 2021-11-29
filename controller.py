@@ -5,6 +5,11 @@ from exceptions import InvalidUsage
 app = Flask(__name__)
 
 
+@app.route("/")
+def test():
+    return jsonify(dict(status='Success'))
+
+
 @app.route("/integration", methods=['POST'])
 def integration():
     json = request.json
