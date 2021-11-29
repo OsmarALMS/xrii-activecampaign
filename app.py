@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from services.filesService import FileCsvToGcs
-from services.azureSQL import insert_json
+from services.azureSQL import test_connection
 from exceptions import InvalidUsage
 
 app = Flask(__name__)
@@ -11,11 +11,16 @@ def index():
     return jsonify(dict(status='Success'))
 
 
+@app.route("/test_connection")
+def index():
+    test_connection()
+    return jsonify(dict(status='Success'))
+
+
 @app.route("/integration", methods=['POST'])
 def integration():
     json = request.json
     FileCsvToGcs.valid_json(json)
-    insert_json(json)
     return jsonify(dict(status='Success'))
 
 

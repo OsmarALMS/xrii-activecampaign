@@ -5,6 +5,20 @@ server = 'infinities-xrii-server'
 database = 'infinities-xrii-db'
 username = 'infinitiesxriiadmin'
 password = '!nf1nities'
+driver = '{ODBC Driver 17 for SQL Server}'
+
+
+def get_connection_string():
+    return 'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;DATABASE=' \
+           + database + ';UID=' + username + ';PWD=' + password
+
+
+def test_connection():
+    conn = pyodbc.connect(get_connection_string())
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT @@Version")
+        row = cursor.fetchall()
+        print(row)
 
 
 def insert_json(json):
