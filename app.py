@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from services.filesService import FileCsvToGcs
+from services.azureSQL import insert_json
 from exceptions import InvalidUsage
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ def index():
 def integration():
     json = request.json
     FileCsvToGcs.valid_json(json)
+    insert_json(json)
     return jsonify(dict(status='Success'))
 
 
