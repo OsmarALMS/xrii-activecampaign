@@ -1,16 +1,16 @@
 import pyodbc
 from datetime import datetime
 
-server = 'infinities-xrii-server'
+server = 'infinities-xrii-server.database.windows.net'
 database = 'infinities-xrii-db'
 username = 'infinitiesxriiadmin'
-password = '!nf1nities'
+password = '{!nf1nities}'
 driver = '{ODBC Driver 17 for SQL Server}'
 
 
 def get_connection_string():
-    return 'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;DATABASE=' \
-           + database + ';UID=' + username + ';PWD=' + password
+    return 'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;DATABASE=' + database + ';UID=' \
+           + username + ';PWD=' + password
 
 
 def test_connection():
@@ -18,7 +18,7 @@ def test_connection():
     with conn.cursor() as cursor:
         cursor.execute("SELECT @@Version")
         row = cursor.fetchall()
-        print(row)
+        return str(row)
 
 
 def insert_json(json):
@@ -28,12 +28,22 @@ def insert_json(json):
     cursor = cnxn.cursor()
     cursor.execute("INSERT INTO active_campaign (VerfiedEmail,OrganisationName,Email,Address,URL,Phone,MerchantID,"
                    "ActiveCardDetails,SelectedPlan,AddOns,MonthlyTrackedUsers,AverageDailyUsers,EngagementRate,"
-                   "RetentionRate,StickyFactor,dtAddRow) values(?,?,?)",
-                   json.get("VerfiedEmail"), json.get("OrganisationName"), json.get("Email"),
-                   json.get("Address"), json.get("URL"), json.get("Phone"),
-                   json.get("MerchantID"), json.get("ActiveCardDetails"), json.get("SelectedPlan"),
-                   json.get("AddOns"), json.get("MonthlyTrackedUsers"), json.get("AverageDailyUsers"),
-                   json.get("EngagementRate"), json.get("RetentionRate"), json.get("StickyFactor"),
-                   datetime.timestamp(now))
+                   "RetentionRate,StickyFactor) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                   str(json.get("AccountData").get("VerfiedEmail")),
+                   str(json.get("AccountData").get("OrganisationName")),
+                   str(json.get("AccountData").get("Email")),
+                   str(json.get("AccountData").get("Address")),
+                   str(json.get("AccountData").get("URL")),
+                   str(json.get("AccountData").get("Phone")),
+                   str(json.get("AccountData").get("MerchantID")),
+                   str(json.get("AccountData").get("ActiveCardDetails")),
+                   str(json.get("AccountData").get("SelectedPlan")),
+                   str(json.get("AccountData").get("AddOns")),
+                   int(json.get("AccountData").get("MonthlyTrackedUsers")),
+                   int(json.get("AccountData").get("AverageDailyUsers")),
+                   float(json.get("AccountData").get("EngagementRate")),
+                   float(json.get("AccountData").get("RetentionRate")),
+                   float(json.get("AccountData").get("StickyFactor"))
+                   )
     cnxn.commit()
     cursor.close()
