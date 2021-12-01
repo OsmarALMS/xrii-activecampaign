@@ -1,5 +1,4 @@
 import pyodbc
-from datetime import datetime
 
 server = 'infinities-xrii-server.database.windows.net'
 database = 'infinities-xrii-db'
@@ -9,12 +8,12 @@ driver = '{ODBC Driver 17 for SQL Server}'
 
 
 def get_connection_string():
-    return 'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;DATABASE=' + database + ';UID=' \
-           + username + ';PWD=' + password
+    return pyodbc.connect('DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;DATABASE=' + database + ';UID=' \
+           + username + ';PWD=' + password)
 
 
 def test_connection():
-    conn = pyodbc.connect(get_connection_string())
+    conn = get_connection_string()
     with conn.cursor() as cursor:
         cursor.execute("SELECT @@Version")
         row = cursor.fetchall()
@@ -22,10 +21,8 @@ def test_connection():
 
 
 def insert_json(json):
-    now = datetime.now()
-    cnxn = pyodbc.connect(
-        'DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
-    cursor = cnxn.cursor()
+    conn = get_connection_string()
+    cursor = conn.cursor()
     cursor.execute("INSERT INTO active_campaign (VerfiedEmail,OrganisationName,Email,Address,URL,Phone,MerchantID,"
                    "ActiveCardDetails,SelectedPlan,AddOns,MonthlyTrackedUsers,AverageDailyUsers,EngagementRate,"
                    "RetentionRate,StickyFactor) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -45,5 +42,5 @@ def insert_json(json):
                    float(json.get("AccountData").get("RetentionRate")),
                    float(json.get("AccountData").get("StickyFactor"))
                    )
-    cnxn.commit()
+    conn.commit()
     cursor.close()
