@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from services.filesService import FileService
 from services.azureSQL import test_connection, insert_json
 from exceptions import InvalidUsage
+from services.activeCampaign import get_campaigns
 
 app = Flask(__name__)
 
@@ -21,7 +22,8 @@ def integration():
     json = request.json
     FileService.valid_json(json)
     insert_json(json)
-    return jsonify(dict(status='Success'))
+    ac_return = get_campaigns()
+    return ac_return.content, ac_return.status_code
 
 
 @app.errorhandler(InvalidUsage)
